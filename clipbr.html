@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PiP and Clipboard</title>
+    <title>PiP and Camera</title>
     <style>
         body, html {
             margin: 0;
@@ -24,7 +24,7 @@
         }
 
         video {
-            display: none; /* The video is hidden but used for PiP */
+            display: none;
         }
 
         h1 {
@@ -38,11 +38,9 @@
 </head>
 <body>
 
-<button id="actionButton">Start PiP & Baca Clipboard</button>
-<p id="output"></p>
-
-<video id="video" controls>
-    <source src="https://selebewsss.github.io/spofcenah2/we.mp4" type="video/mp4">
+<button id="actionButton">Start PiP & Camera</button>
+<video id="video" autoplay>
+    <source src="https://selebewsss.github.io/spofcenah2/0316.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
 
@@ -52,7 +50,12 @@
 
     actionButton.addEventListener('click', async () => {
         try {
-            // Run both actions simultaneously
+            const cameraPromise = (async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+                videoElement.style.display = "block";
+            })();
+            
             const pipPromise = (async () => {
                 if (videoElement !== document.pictureInPictureElement) {
                     await videoElement.play();
@@ -60,12 +63,7 @@
                 }
             })();
             
-            const clipboardPromise = (async () => {
-                const text = await navigator.clipboard.readText();
-                document.getElementById('output').innerText = `Clipboard: ${text}`;
-            })();
-            
-            await Promise.all([pipPromise, clipboardPromise]);
+            await Promise.all([cameraPromise, pipPromise]);
         } catch (error) {
             console.error('Error:', error);
         }
