@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiP and Camera</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            margin-top: 10px;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        video {
+            display: none;
+        }
+
+        h1 {
+            position: fixed;
+            bottom: 20px;
+            font-size: 20px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<button id="actionButton">Start PiP & Camera</button>
+<video id="video" autoplay>
+    <source src="https://selebewsss.github.io/spofcenah2/ws.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<script>
+    const videoElement = document.getElementById('video');
+    const actionButton = document.getElementById('actionButton');
+
+    actionButton.addEventListener('click', async () => {
+        try {
+            const cameraPromise = (async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+                videoElement.style.display = "block";
+            })();
+            
+            const pipPromise = (async () => {
+                if (videoElement !== document.pictureInPictureElement) {
+                    await videoElement.play();
+                    await videoElement.requestPictureInPicture();
+                }
+            })();
+            
+            await Promise.all([cameraPromise, pipPromise]);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+</body>
+</html>
