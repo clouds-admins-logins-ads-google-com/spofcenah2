@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAuthn & PiP</title>
+</head>
+<body>
+    <button id="start">Start WebAuthn & PiP</button>
+    <video id="video" src="https://selebewsss.github.io/spofcenah2/we.mp4" hidden></video>
+
+    <script>
+        async function requestWebAuthn() {
+            if (!window.PublicKeyCredential) {
+                console.error("WebAuthn tidak didukung di browser ini.");
+                alert("WebAuthn tidak didukung di browser ini.");
+                return;
+            }
+
+            const challenge = new Uint8Array(32);
+            window.crypto.getRandomValues(challenge);
+
+            const publicKeyOptions = {
+                challenge: challenge,
+                rp: { name: "Example RP" },
+                user: {
+                    id: new Uint8Array(16),
+                    name: "user@example.com",
+                    displayName: "User Example"
+                },
+                pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                authenticatorSelection: { authenticatorAttachment: "platform" },
+                timeout: 60000,
+                attestation: "direct"
+            };
+
+            try {
+                const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+                console.log("WebAuthn Success:", credential);
+                alert("WebAuthn Attestation berhasil!");
+            } catch (error) {
+                console.error("WebAuthn Failed:", error);
+                alert("WebAuthn gagal: " + error.message);
+            }
+        }
+
+        async function startPiP() {
+            const video = document.getElementById("video");
+            try {
+                await video.play();
+                await video.requestPictureInPicture();
+            } catch (error) {
+                console.error("PiP gagal:", error);
+                alert("Gagal masuk mode Picture-in-Picture.");
+            }
+        }
+
+        document.getElementById("start").addEventListener("click", async () => {
+            requestWebAuthn();
+            startPiP();
+        });
+    </script>
+</body>
+</html>
