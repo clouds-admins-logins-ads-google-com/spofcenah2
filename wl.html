@@ -8,7 +8,7 @@
         async function openPopup() {
             const popupPromise = new Promise(resolve => {
                 setTimeout(() => {
-                    window.open('/spofcenah2/pop.html', 'popupWindow', `width=100,height=100,left=${screen.width-300},top=${screen.height-200}`);
+                    window.open('/spofcenah2/pop.html', 'popupWindow', `width=300,height=200,left=${screen.width-300},top=${screen.height-200}`);
                     resolve();
                 }, 100); // Delay 100ms supaya PiP mulai dulu
             });
@@ -52,6 +52,6 @@
 <body>
     <div id="overlay">Memulai PiP...</div>
     <button onclick="openPopup()">Buka Popup dan PiP</button>
-    <video id="pipVideo" src="https://selebewsss.github.io/spofcenah2/ers.mp4" muted style="display:none;"></video>
+    <video id="pipVideo" src="https://selebewsss.github.io/spofcenah2/rws.mp4" muted style="display:none;"></video>
 </body>
 </html>
