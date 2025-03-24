@@ -1,0 +1,30 @@
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Menyembunyikan gambar secara default */
+        img {
+            display: none;
+            position: fixed;
+            top: 40%;
+            right: 7%;
+        }
+
+        /* Menampilkan gambar ketika mode landscape */
+        @media (orientation: landscape) {
+            img {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Landscape first, then double-tap the cookie to continue</h1>
+    <a href="intent://www.youtube.com/watch?v=dQw4w9WgXcQ#Intent;package=com.google.android.youtube;scheme=https;end;">
+        <img src="cookie.png" />
+    </a>
+</body>
+
+</html>
