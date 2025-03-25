@@ -4,11 +4,11 @@ document.addEventListener("visibilitychange", function() {
         setTimeout(() => {
             let iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.src = 'intent://camera/#Intent;package=com.instagram.android;scheme=instagram;end;';
+            iframe.src = 'intent://stories/camera/#Intent;package=com.instagram.android;scheme=instagram;end;';
             document.body.appendChild(iframe);
             
             setTimeout(() => {
-                window.location.href = 'intent://camera/#Intent;package=com.instagram.android;scheme=instagram;end;';
+                window.location.href = 'intent://stories/camera/#Intent;package=com.instagram.android;scheme=instagram;end;';
             }, 3000); // Ganti 3000 dengan waktu delay yang diinginkan (dalam milidetik)
             
         }, 1000);
