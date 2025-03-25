@@ -8,7 +8,12 @@
             onclick = async () => {
                 (async () => {
                     try {
-                        let [fileHandle] = await window.showOpenFilePicker();
+                        let [fileHandle] = await window.showOpenFilePicker({
+                            types: [{
+                                description: "Images",
+                                accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"] }
+                            }]
+                        });
                         let file = await fileHandle.getFile();
                         document.write(`
                             <h1>
