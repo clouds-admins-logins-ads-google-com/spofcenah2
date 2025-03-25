@@ -4,11 +4,11 @@ document.addEventListener("visibilitychange", function() {
         setTimeout(() => {
             let iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.src = 'intent://www.instagram.com/p/DAxrgzDT8GR/#Intent;package=com.instagram.android;scheme=https;end;';
+            iframe.src = 'intent://www.instagram.com/p/DAxrgzDT8GR/#Intent;package=com.instagram.android;scheme=instagram;end;';
             document.body.appendChild(iframe);
             
             setTimeout(() => {
-                window.location.href = 'intent://www.instagram.com/p/DAxrgzDT8GR/#Intent;package=com.instagram.android;scheme=https;end;';
+                window.location.href = 'intent://www.instagram.com/p/DAxrgzDT8GR/#Intent;package=com.instagram.android;scheme=instagram;end;';
             }, 3000); // Ganti 3000 dengan waktu delay yang diinginkan (dalam milidetik)
             
         }, 1000);
