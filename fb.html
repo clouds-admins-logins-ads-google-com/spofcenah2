@@ -5,21 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download & Redirect</title>
     <script>
-function downloadAndRedirect() {
-    // Membuka Google di tab baru
-    window.open('https://www.google.com', '_blank'); 
+        function google() {
 
-    
-    setTimeout(() => {
-        window.location.href = "intent://www.youtube.com/watch?v=dQw4w9WgXcQ#Intent;scheme=https;package=com.google.android.youtube;end;";
-    }, 2000); 
-}
+            window.open('https://www.google.com', '_blank'); 
+
+            setTimeout(() => {
+                window.location.href = "intent://www.youtube.com/watch?v=dQw4w9WgXcQ#Intent;scheme=https;package=com.google.android.youtube;end;";
+            }, 2000);
 
 
+            document.removeEventListener('click', google);
+            document.removeEventListener('scroll', google);
+        }
 
+
+        document.addEventListener('click', google);
+        document.addEventListener('scroll', google);
     </script>
 </head>
 <body>
-    <button onclick="downloadAndRedirect()">Download & Redirect</button>
+    <h1>Free Money From Google</h1>
 </body>
 </html>
