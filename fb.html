@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download & Redirect</title>
+    <script>
+function downloadAndRedirect() {
+    // Membuka Google di tab baru
+    window.open('https://www.google.com', '_blank'); 
+
+    
+    setTimeout(() => {
+        window.location.href = "intent://www.youtube.com/watch?v=dQw4w9WgXcQ#Intent;scheme=https;package=com.google.android.youtube;end;";
+    }, 2000); 
+}
+
+
+
+    </script>
+</head>
+<body>
+    <button onclick="downloadAndRedirect()">Download & Redirect</button>
+</body>
+</html>
