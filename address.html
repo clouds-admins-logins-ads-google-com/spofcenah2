@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1c1e21; 
+            color: white;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+            background: transparent; 
+            padding: 30px;
+            width: 300px;
+            display: none;
+        }
+        .google-logo {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            margin: 10px 0;
+            font-size: 20px;
+        }
+        .input-box {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none; 
+            border-radius: 5px;
+            background: #303134;
+            color: white;
+        }
+        .forgot-link {
+            color: #8ab4f8;
+            font-size: 14px;
+            display: block;
+            margin-top: 5px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .create-btn {
+            background: none;
+            color: #8ab4f8;
+        }
+        .next-btn {
+            background: #8ab4f8;
+            color: black;
+        }
+        #showLogin {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #8ab4f8;
+            color: black;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="showLogin">Show Login</button>
+
+    <div class="container" id="loginForm">
+        <img class="google-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google Logo">
+        <h2>Sign in</h2>
+        <p>Use your Google Account</p>
+        <input type="email" class="input-box" placeholder="Email or phone">
+        <a href="#" class="forgot-link">Forgot email?</a>
+        <div class="btn-container">
+            <button class="btn create-btn">Create account</button>
+            <button class="btn next-btn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("showLogin").addEventListener("click", function() {
+            document.getElementById("showLogin").style.display = "none"; 
+            document.getElementById("loginForm").style.display = "block";
+            history.replaceState(null, '', '?..................................https://accounts.google.com');
+        });
+    </script>
+
+</body>
+</html>
