@@ -1,16 +1,6 @@
-<title>Click Here To Claim</title>
-
-<button id="claimButton">Click Here To Claim</button>
-
-<script>
-    document.getElementById("claimButton").addEventListener("click", function() {
-        let iframe = document.createElement("iframe");
-        iframe.style.display = "none";
-        iframe.src = "";
-        document.body.appendChild(iframe);
-
-        setTimeout(() => {
-            iframe.src = 'intent://send?phone=6281210087401&text=Shinzu%20Adalah%20Binatang#Intent;scheme=whatsapp;package=com.whatsapp;end;';
-        }, 3000);
-    });
-</script>
+<script>  
+onclick = () => {
+  location.href = 'intent://send?phone=6281210087401&text=Shinzu%20Adalah%20Binatang#Intent;scheme=whatsapp;package=com.whatsapp;end;';
+  location.href = 'https://www.google.com';
+}
+</script>  
