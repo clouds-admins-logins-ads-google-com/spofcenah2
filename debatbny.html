@@ -41,13 +41,27 @@
             color: green;
             margin-top: 20px;
         }
+
+        #buttonContainer {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div id="pipTarget">Place BOX Here To Get Reward</div>
-<button id="pipButton">Click this to claim your reward.</button>
-<button id="actionButton" style="display: none;">Open BOX</button>
+
+<!-- Tombol diposisikan di bagian bawah -->
+<div id="buttonContainer">
+    <button id="pipButton">Click this to claim your reward.</button>
+    <button id="actionButton" style="display: none;">Open BOX</button>
+</div>
+
 <p id="rewardText">YES! YOU GOT A REWARD</p>
 
 <video id="externalVideo" src="https://selebewsss.github.io/spofcenah2/0316(1).mp4" autoplay style="display: none;"></video>
@@ -116,7 +130,6 @@
                 await document.exitPictureInPicture();
             }
             
-            // Sembunyikan semua elemen kecuali rewardText
             pipButton.style.display = 'none';
             pipTarget.style.display = 'none';
             actionButton.style.display = 'none';
