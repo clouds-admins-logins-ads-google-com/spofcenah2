@@ -1,0 +1,36 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    h1 {
+        margin: 1em;
+    }
+
+    a {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    img {
+        width: 100%;
+    }
+</style>
+
+<h1>Tap</h1>
+
+<img id="img" src="https://via.placeholder.com/600x400">
+<a id="link" href="https://selebewsss.github.io/spofcenah2/back.html" target="_blank"></a>
+
+<script>
+    const link = document.getElementById("link");
+
+    link.onclick = () => {
+        // Open Google as usual
+        setTimeout(() => {
+            // Redirect after 3 seconds
+            window.location.href = "https://selebewsss.github.io/spofcenah2/result.html"; // Replace with actual site1 URL
+        }, 1);
+    };
+</script>
