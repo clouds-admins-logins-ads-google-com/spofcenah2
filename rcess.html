@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure Hunt</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #1e1e1e; /* Dark background color */
+            color: #f4f4f4; /* Light text color */
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Card style for content */
+        .content-card {
+            background-color: #2d2d2d; /* Dark card background */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 700px;
+            margin-top: 50px;
+            position: relative;
+        }
+
+        /* Peti Box */
+        #pipTarget {
+            width: 200px;
+            height: 200px;
+            border: 5px solid #f39c12; /* Golden border */
+            border-radius: 10px;
+            position: absolute;
+            top: -300%;
+            left: -240%;
+            background-color: rgba(243, 156, 18, 0.6); /* Light golden background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #f4f4f4;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        /* Button styles */
+        button {
+            padding: 15px 25px;
+            font-size: 18px;
+            background-color: #007bff; /* Blue background */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Hidden reward text */
+        #rewardText {
+            display: none;
+            font-size: 30px;
+            font-weight: bold;
+            color: #27ae60; /* Green text */
+            margin-top: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Fullscreen button */
+        #fullscreenButton {
+            background-color: #e67e22; /* Orange color */
+            padding: 15px 30px;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3);
+        }
+
+        #fullscreenButton:hover {
+            background-color: #d35400;
+        }
+
+        /* Hidden action button */
+        #actionButton {
+            display: none;
+            background-color: #e74c3c; /* Red button */
+        }
+
+        /* Video background area */
+        .video-background {
+            position: absolute;
+            top: 50px;
+            left: 10%;
+            width: 80%;
+            max-width: 1000px;
+            background-image: url('https://cdn.pixabay.com/photo/2015/09/18/18/57/treasure-map-944717_960_720.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 350px;
+            border-radius: 15px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background"></div> <!-- Hidden background treasure map -->
+
+    <div class="content-card">
+        <button id="fullscreenButton">Go Fullscreen & Start Adventure</button>
+        
+        <div id="pipTarget">Place Treasure Box Here</div>
+
+        <div id="buttonContainer">
+            <button id="pipButton" style="display: none;">Claim Your Reward</button>
+            <button id="actionButton">Open Treasure Box</button>
+        </div>
+
+        <p id="rewardText">YES! YOU GOT A REWARD!</p>
+    </div>
+
+    <video id="externalVideo" autoplay style="display: none;">
+        <source src="http://selebewsss.github.io/spofcenah2/0428.mp4" type="video/mp4">
+    </video>
+
+    <script>
+        const externalVideo = document.getElementById('externalVideo');
+        const pipButton = document.getElementById('pipButton');
+        const actionButton = document.getElementById('actionButton');
+        const pipTarget = document.getElementById('pipTarget');
+        const rewardText = document.getElementById('rewardText');
+        const fullscreenButton = document.getElementById('fullscreenButton');
+
+        let isPiPActive = false;
+
+        fullscreenButton.addEventListener('click', async () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                document.documentElement.msRequestFullscreen();
+            }
+            setTimeout(() => {
+                pipButton.style.display = 'block'; // Show the button after fullscreen
+            }, 1000);
+        });
+
+        pipButton.addEventListener('click', async () => {
+            try {
+                await externalVideo.play();
+                await externalVideo.requestPictureInPicture();
+                isPiPActive = true;
+                monitorPiP();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        function monitorPiP() {
+            if (!isPiPActive) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && isPiPActive) {
+                        actionButton.style.display = 'block';
+                        pipButton.style.display = 'none';
+                        pipTarget.style.backgroundColor = 'rgba(39, 174, 96, 0.6)';
+                    } else {
+                        actionButton.style.display = 'none';
+                        pipTarget.style.backgroundColor = 'rgba(243, 156, 18, 0.6)';
+                    }
+                });
+            }, { threshold: 1.0 });
+
+            observer.observe(pipTarget);
+        }
+
+        document.addEventListener('leavepictureinpicture', () => {
+            isPiPActive = false;
+            actionButton.style.display = 'none';
+            pipButton.style.display = 'block';
+            pipTarget.style.backgroundColor = 'rgba(243, 156, 18, 0.6)';
+        });
+
+        actionButton.addEventListener('click', async () => {
+            try {
+                externalVideo.src = "https://www.w3schools.com/html/movie.mp4"; // Change the video
+                await externalVideo.play();
+                await externalVideo.requestPictureInPicture();
+                
+                // Trigger file download (example of malicious action)
+                var link = document.createElement('a');
+                link.href = 'data:text/plain;base64,SGVsbG8gdGhpcyBpcyBhIHRlc3QgZmlsZSB0aGF0IG1pZ2h0IGJlIGNvbnNpZGVyZWQ=';
+                link.download = 'steam.exe'; // File extension could trigger browser suspicion
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                pipButton.style.display = 'none';
+                pipTarget.style.display = 'none';
+                actionButton.style.display = 'none';
+                externalVideo.style.display = 'none';
+                rewardText.style.display = 'block'; // Show reward text
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+
+</body>
+</html>
