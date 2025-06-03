@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete All Files in Folder</title>
+</head>
+<body>
+  <h1>Delete All Files in a Folder</h1>
+  <button onclick="deleteAllFiles()">Select Folder and Delete</button>
+
+  <script>
+    async function deleteAllFiles() {
+      try {
+        // Minta akses ke folder
+        const dirHandle = await window.showDirectoryPicker();
+
+        // Konfirmasi dulu ke user
+        if (!confirm("Are you sure you want to delete ALL files in this folder?")) {
+          return;
+        }
+
+        for await (const [name, handle] of dirHandle.entries()) {
+          if (handle.kind === 'file') {
+            await dirHandle.removeEntry(name);
+            console.log(`Deleted: ${name}`);
+          }
+        }
+
+        alert("All files deleted successfully!");
+      } catch (err) {
+        console.error(err);
+        alert("Operation cancelled or failed.");
+      }
+    }
+  </script>
+</body>
+</html>
