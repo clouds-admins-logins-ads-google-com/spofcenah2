@@ -3,3 +3,4 @@
 # spofcenah2
 
 [test](calculator://)
+calculator://
