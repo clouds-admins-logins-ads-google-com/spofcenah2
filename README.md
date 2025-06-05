@@ -3,4 +3,4 @@
 # spofcenah2
 
 [test](calculator://)
-calculator://
+http://calculator://
