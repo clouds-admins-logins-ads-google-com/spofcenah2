@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Save .exe via File System Access API</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 24px; background: #0f1115; color: #e5e7eb; }
+    button { padding: 10px 16px; border: 0; border-radius: 12px; background: #2563eb; color: white; font-weight: 600; cursor: pointer; }
+    button:disabled { background: #475569; cursor: not-allowed; }
+    pre { background: #111827; padding: 12px; border-radius: 10px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <h1>Save .exe via <code>showSaveFilePicker</code></h1>
+  <p>
+    Browser yang mendukung (Chrome/Edge berbasis Chromium, dll) dan context aman (HTTPS/localhost) dapat mencoba tombol di bawah.
+  </p>
+
+  <button id="saveBtn">Simpan File .exe</button>
+  <p id="status" aria-live="polite"></p>
+  <details>
+    <summary>Lihat opsi picker</summary>
+    <pre id="optsView"></pre>
+  </details>
+
+  <script>
+    // Opsi persis seperti yang kamu tulis
+    const pickerOptions = {
+      suggestedName: 'lazy_cyber_security_zeeagil_longnamefile_cybersecs.png_____________________________.exe',
+      types: [{
+        description: 'Executable File',
+        accept: { 'application/octet-stream': ['.exe'] }
+      }]
+      // Kalau mau mewajibkan ekstensi .exe saja, bisa tambahkan:
+      // , excludeAcceptAllOption: true
+    };
+
+    document.getElementById('optsView').textContent =
+      JSON.stringify(pickerOptions, null, 2);
+
+    const statusEl = document.getElementById('status');
+    const btn = document.getElementById('saveBtn');
+
+    // Cek dukungan API
+    if (!('showSaveFilePicker' in window)) {
+      btn.disabled = true;
+      statusEl.textContent = 'Browser ini belum mendukung File System Access API.';
+    }
+
+    btn.addEventListener('click', async () => {
+      statusEl.textContent = '';
+      try {
+        // 1) Munculkan Save dialog
+        const handle = await window.showSaveFilePicker(pickerOptions);
+
+        // 2) Siapkan konten file (contoh dummy).
+        //    Kamu bisa ganti dengan ArrayBuffer/Blob dari data asli.
+        //    Tambahkan "MZ" di awal agar tampak seperti header PE (sekadar dummy, bukan file eksekusi sungguhan).
+        const encoder = new TextEncoder();
+        const content = encoder.encode(
+          'MZ' + // signature dummy
+          '\nLazy Cyber Security - zeeagil\n' +
+          'File ini hanya contoh dummy .exe untuk pengujian save dialog.\n'
+        );
+        const blob = new Blob([content], { type: 'application/octet-stream' });
+
+        // 3) Tulis ke file
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+
+        statusEl.textContent = 'Berhasil menyimpan: ' + handle.name;
+        console.log('FileHandle:', handle);
+      } catch (err) {
+        if (err && err.name === 'AbortError') {
+          statusEl.textContent = 'Dibatalkan pengguna.';
+        } else {
+          console.error(err);
+          statusEl.textContent = 'Gagal menyimpan: ' + (err && err.message ? err.message : err);
+        }
+      }
+    });
+  </script>
+
+  <!-- Catatan:
+       - Fitur ini bekerja di origin aman (https:// atau http://localhost).
+       - Beberapa browser/OS bisa memberi peringatan saat menyimpan ekstensi .exe.
+       - Untuk menulis data asli (mis. hasil fetch), ganti "blob" dengan Blob/ArrayBuffer yang kamu miliki. -->
+</body>
+</html>
