@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unique Text Generator - Ultra Modern</title>
+    <style>
+        /* CSS Variables - For easy customization */
+        :root {
+            --color-bg-primary: #0a0a0a; /* Ultra Dark */
+            --color-bg-secondary: #1f1f1f; /* Card Background */
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #aaaaaa;
+            --color-accent: #00bcd4; /* Cyan / Aqua */
+            --color-accent-dark: #0097a7;
+            --color-border: #333333;
+            --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        }
+
+        /* Global Reset & Body Styling */
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 40px 20px;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: var(--color-bg-secondary);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
+                        0 0 0 1px var(--color-border); /* Subtle Outer Border */
+            transition: transform 0.3s ease-in-out;
+        }
+        .container:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Header Styling */
+        h1 {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, var(--color-accent), #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: var(--color-text-secondary);
+            margin-bottom: 30px;
+            font-size: 1em;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 15px;
+        }
+
+        /* Form Controls */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 0.95em;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 18px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
+            outline: none;
+            background-color: #141414; /* Slightly lighter on focus */
+        }
+        .hint {
+            font-size: 0.85em;
+            color: var(--color-text-secondary);
+            margin-top: -15px;
+            margin-bottom: 25px;
+            padding-left: 5px;
+        }
+
+        /* Layout for Count and Length Inputs */
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Button Styling */
+        button {
+            background: linear-gradient(90deg, var(--color-accent), #00e5ff);
+            color: var(--color-bg-primary); /* Text darker for contrast */
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
+        }
+        button:hover {
+            background: linear-gradient(90deg, #00e5ff, var(--color-accent));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.6);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Separator */
+        .divider {
+            height: 1px;
+            background-color: var(--color-border);
+            margin: 35px 0;
+            opacity: 0.5;
+        }
+
+        /* Results Area */
+        h2 {
+            color: var(--color-accent);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        #results {
+            padding: 25px;
+            border: 1px solid var(--color-accent-dark);
+            background-color: var(--color-bg-primary); 
+            border-radius: 8px;
+            font-size: 0.9em;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: #d0d0d0;
+            min-height: 100px;
+            overflow-x: auto;
+            /* Monospace font for code look */
+            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: inset 0 0 5px rgba(0, 188, 212, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                margin: 0 10px;
+            }
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>⚙️ UNIQUE TEXT GENERATOR</h1>
+        <p class="subtitle">Generate unique strings within your specified format. Ideal for bulk account or test data creation.</p>
+
+        <div>
+            <label for="templateText">Template Text:</label>
+            <input type="text" id="templateText" placeholder="Example: agil{here}@gmail.com">
+            <p class="hint">Use **`{here}`** as the marker where the unique code will be inserted. The input will be empty unless you type something.</p>
+        </div>
+
+        <div class="input-group">
+            <div>
+                <label for="count">Number of Results to Generate:</label>
+                <input type="number" id="count" value="10" min="1">
+            </div>
+            <div>
+                <label for="uniqueLength">Unique Code Length (Characters):</label>
+                <input type="number" id="uniqueLength" value="8" min="1">
+            </div>
+        </div>
+        
+        <button onclick="generateUniqueText()">🚀 GENERATE NOW</button>
+
+        <div class="divider"></div>
+
+        <h2>< Generated Results ></h2>
+        <pre id="results">...</pre>
+    </div>
+
+    <script>
+        // --- JavaScript Functions (Core logic is unchanged) ---
+
+        // Fungsi untuk menghasilkan string acak (unik)
+        function generateRandomString(length) {
+            const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                // Pick a random character and append it to the result
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        // Main function to process input and generate text
+        function generateUniqueText() {
+            const templateText = document.getElementById('templateText').value;
+            const count = parseInt(document.getElementById('count').value);
+            const uniqueLength = parseInt(document.getElementById('uniqueLength').value);
+            const resultsDiv = document.getElementById('results');
+            const placeholder = '{here}';
+
+            // Validasi input dasar
+            if (!templateText) {
+                // Periksa apakah input kosong karena sekarang tidak ada nilai default
+                 resultsDiv.textContent = 'ERROR: Template Text cannot be empty. Please enter your format (e.g., user{here}@domain.com).';
+                 return;
+            }
+            
+            if (!templateText.includes(placeholder)) {
+                resultsDiv.textContent = 'ERROR: The template must contain the unique placeholder: {here}';
+                return;
+            }
+            if (isNaN(count) || count < 1 || isNaN(uniqueLength) || uniqueLength < 1) {
+                resultsDiv.textContent = 'ERROR: Count and unique code length must be positive numbers.';
+                return;
+            }
+
+            let generatedTexts = [];
+
+            // Loop according to the requested count
+            for (let i = 0; i < count; i++) {
+                const uniqueCode = generateRandomString(uniqueLength);
+                
+                // Replace the {here} marker with the unique code
+                const finalResult = templateText.replace(placeholder, uniqueCode);
+                
+                generatedTexts.push(finalResult);
+            }
+
+            // Display results in the 'results' div, separated by new lines
+            resultsDiv.textContent = generatedTexts.join('\n');
+            
+            // Add a slight animation to the results area
+            resultsDiv.style.opacity = 0;
+            setTimeout(() => {
+                 resultsDiv.style.transition = 'opacity 0.5s';
+                 resultsDiv.style.opacity = 1;
+            }, 50);
+        }
+        
+        // Set the initial text in the results area
+        document.addEventListener('DOMContentLoaded', () => {
+             document.getElementById('results').textContent = 'Your results will appear here after clicking GENERATE.';
+        });
+    </script>
+
+</body>
+</html>
