@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS</title>
+</head>
+<body>
+    <div id="g_id_onload"
+        data-client_id="823496596253-uptuk5vf4ms9tqcclllhntg0nvgrijj2.apps.googleusercontent.com"
+        data-context="signin"
+        data-ux_mode="popup"
+        data-callback="callback"
+        data-nonce="1337"
+        data-auto_select="true"
+        data-close_on_tap_outside="false"
+        data-itp_support="true"
+        data-use_fedcm_for_prompt="false"
+        data-prompt_parent_id="g_id_onload"
+        style="position: absolute; top: 0px; left: 0px; width: 0; height: 0; z-index: 1001;">
+    </div>
+    <script>
+        function callback(e) {
+            parent.postMessage(e, "*")
+        }
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+</body>
+</html>
