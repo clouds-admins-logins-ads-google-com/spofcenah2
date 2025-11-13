@@ -1,0 +1,322 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>1inch DApp Browser — Web3 Testbed</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, Roboto, sans-serif; padding: 18px; max-width: 980px; margin:auto; line-height:1.45; color:#111 }
+    h1 { margin-bottom:6px }
+    .card { border:1px solid #eee; padding:12px; border-radius:8px; margin:10px 0; background:#fafafa }
+    label { display:block; margin-top:8px; font-size:13px }
+    input, select, textarea { width:100%; padding:8px; margin-top:6px; box-sizing:border-box; border-radius:6px; border:1px solid #ddd }
+    button { padding:8px 12px; margin-top:8px; border-radius:6px; cursor:pointer }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px }
+    pre { background:#0f172a; color:#d1fae5; padding:10px; border-radius:6px; max-height:250px; overflow:auto; }
+    .small { font-size:12px; color:#555 }
+  </style>
+</head>
+<body>
+  <h1>1inch DApp Browser — Web3 Testbed</h1>
+  <p class="small">File ini mencoba banyak RPC/utility yang biasa ada di <code>window.ethereum</code>. Cocok untuk cek behavior 1inch DApp Browser. <strong>Gunakan testnet atau value 0 saat eksperimen.</strong></p>
+
+  <div class="card">
+    <strong>Status</strong>
+    <div id="status" class="small">memeriksa provider...</div>
+  </div>
+
+  <div class="card">
+    <strong>Quick controls</strong>
+    <div class="grid">
+      <div>
+        <button id="btnConnect">Connect (eth_requestAccounts)</button>
+        <button id="btnAccounts">Get Accounts (eth_accounts)</button>
+        <button id="btnBalance">Get Balance</button>
+        <button id="btnChain">Get ChainId</button>
+      </div>
+
+      <div>
+        <button id="btnSign">Sign message (personal_sign)</button>
+        <button id="btnSignTyped">Sign typed data (EIP-712)</button>
+        <button id="btnWatch">Watch Events (accounts/chain)</button>
+      </div>
+    </div>
+
+    <label>Message to sign</label>
+    <input id="msg" value="Hello from 1inch DApp Browser test"/>
+
+    <label>EIP-712 typed data (example)</label>
+    <textarea id="typed" rows="6">
+{
+  "domain": {"name":"Example","version":"1","chainId":1,"verifyingContract":"0x0000000000000000000000000000000000000000"},
+  "message": {"contents":"Hello","from":"0x0000000000000000000000000000000000000000"},
+  "primaryType":"Mail",
+  "types": {
+    "EIP712Domain":[{"name":"name","type":"string"},{"name":"version","type":"string"},{"name":"chainId","type":"uint256"},{"name":"verifyingContract","type":"address"}],
+    "Mail":[{"name":"contents","type":"string"},{"name":"from","type":"address"}]
+  }
+}
+    </textarea>
+  </div>
+
+  <div class="card">
+    <strong>Transaction / Contract</strong>
+
+    <label>To address</label>
+    <input id="to" placeholder="0x..." value="0x0000000000000000000000000000000000000000"/>
+
+    <label>Value (ETH)</label>
+    <input id="value" placeholder="0.0" value="0"/>
+
+    <label>Data (hex) — for eth_call / sendTransaction</label>
+    <input id="data" placeholder="0x... (optional)"/>
+
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btnSend">Send Transaction (eth_sendTransaction)</button>
+      <button id="btnCall">eth_call (read-only)</button>
+      <button id="btnEstimate">Estimate Gas</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <strong>Network & Wallet helpers</strong>
+
+    <label>Switch network (chainId hex)</label>
+    <input id="chainIdInput" placeholder="0x1 for Mainnet, 0x5 for Goerli" value="0x1"/>
+
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btnSwitch">wallet_switchEthereumChain</button>
+      <button id="btnAddChain">wallet_addEthereumChain (sample BSC)</button>
+    </div>
+
+    <label>Add token (wallet_watchAsset)</label>
+    <input id="tokenAddress" placeholder="0xTokenAddress" />
+    <input id="tokenSymbol" placeholder="SYMB" value="TST"/>
+    <input id="tokenDecimals" placeholder="18" value="18"/>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btnAddToken">Add Token (wallet_watchAsset)</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="btnGetPerms">wallet_getPermissions</button>
+      <button id="btnRequestPerms">wallet_requestPermissions</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <strong>Logs</strong>
+    <pre id="log">ready.</pre>
+  </div>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const statusEl = document.getElementById('status');
+
+    function log(...args) {
+      const line = args.map(a => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a))).join(' ');
+      logEl.textContent = (new Date()).toISOString() + " — " + line + "\n\n" + logEl.textContent;
+      console.log(...args);
+    }
+
+    function toHexWei(ethStr) {
+      // Convert decimal ETH string to hex wei string
+      const parts = ethStr.toString().split('.');
+      const whole = BigInt(parts[0] || "0");
+      let frac = parts[1] || "";
+      // pad to 18 decimals
+      if (frac.length > 18) frac = frac.slice(0,18);
+      while (frac.length < 18) frac += '0';
+      const wei = whole * (10n ** 18n) + BigInt(frac || "0");
+      return '0x' + wei.toString(16);
+    }
+
+    async function detectProvider() {
+      if (window.ethereum) {
+        statusEl.textContent = "Provider detected (window.ethereum).";
+        log("provider available", {isMeta: !!window.ethereum.isMetaMask, provider: window.ethereum.constructor && window.ethereum.constructor.name});
+      } else {
+        statusEl.textContent = "No provider detected.";
+        log("no provider");
+      }
+    }
+
+    detectProvider();
+
+    // Buttons
+    document.getElementById('btnConnect').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      try {
+        const acc = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        log('eth_requestAccounts ->', acc);
+      } catch (e) {
+        log('requestAccounts err', e.message || e);
+      }
+    };
+
+    document.getElementById('btnAccounts').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const acc = await window.ethereum.request({ method: 'eth_accounts' });
+      log('eth_accounts ->', acc);
+    };
+
+    document.getElementById('btnBalance').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const accs = await window.ethereum.request({ method: 'eth_accounts' });
+      const addr = (accs && accs[0]) || prompt("No account returned by eth_accounts. Paste an address to check balance:");
+      if (!addr) return;
+      const bal = await window.ethereum.request({ method: 'eth_getBalance', params: [addr, 'latest'] });
+      // convert hex wei to human readable
+      const wei = BigInt(bal);
+      const eth = (wei / 10n**18n).toString() + '.' + String( ( (wei % 10n**18n).toString().padStart(18,'0') ).slice(0,6) );
+      log('balance for', addr, bal, '≈', eth, 'ETH');
+    };
+
+    document.getElementById('btnChain').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      log('chainId ->', chainId);
+    };
+
+    document.getElementById('btnSign').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const acc = accounts && accounts[0];
+      if (!acc) return alert('No account. Connect first.');
+      const msg = document.getElementById('msg').value || 'hello';
+      try {
+        const sig = await window.ethereum.request({ method: 'personal_sign', params: [msg, acc] });
+        log('personal_sign ->', sig);
+      } catch (e) { log('personal_sign err', e.message || e); }
+    };
+
+    document.getElementById('btnSignTyped').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const acc = accounts && accounts[0];
+      if (!acc) return alert('No account. Connect first.');
+      try {
+        const typed = JSON.parse(document.getElementById('typed').value);
+        // many wallets expect JSON-stringified typed data for eth_signTypedData_v4
+        const params = [acc, JSON.stringify(typed)];
+        const sig = await window.ethereum.request({ method: 'eth_signTypedData_v4', params });
+        log('eth_signTypedData_v4 ->', sig);
+      } catch (e) { log('signTyped err', e.message || e); }
+    };
+
+    document.getElementById('btnSend').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const from = accounts && accounts[0];
+      if (!from) return alert('No account. Connect first.');
+      const to = document.getElementById('to').value;
+      const value = document.getElementById('value').value || '0';
+      const data = document.getElementById('data').value || '0x';
+      const hexValue = toHexWei(value);
+      const tx = { from, to, value: hexValue, data };
+      try {
+        const res = await window.ethereum.request({ method: 'eth_sendTransaction', params: [tx] });
+        log('eth_sendTransaction ->', res);
+      } catch (e) { log('eth_sendTransaction err', e.message || e); }
+    };
+
+    document.getElementById('btnCall').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const to = document.getElementById('to').value;
+      const data = document.getElementById('data').value || '0x';
+      try {
+        const res = await window.ethereum.request({ method: 'eth_call', params: [{ to, data }, 'latest'] });
+        log('eth_call ->', res);
+      } catch (e) { log('eth_call err', e.message || e); }
+    };
+
+    document.getElementById('btnEstimate').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const from = accounts && accounts[0];
+      const to = document.getElementById('to').value;
+      const data = document.getElementById('data').value || '0x';
+      try {
+        const res = await window.ethereum.request({ method: 'eth_estimateGas', params: [{ from, to, data }] });
+        log('eth_estimateGas ->', res);
+      } catch (e) { log('eth_estimateGas err', e.message || e); }
+    };
+
+    document.getElementById('btnSwitch').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const chainId = document.getElementById('chainIdInput').value || '0x1';
+      try {
+        const res = await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] });
+        log('wallet_switchEthereumChain ->', res);
+      } catch (e) {
+        log('switch err', e.message || e);
+      }
+    };
+
+    document.getElementById('btnAddChain').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      // sample BSC (Binance Smart Chain) add
+      const params = {
+        chainId: '0x38',
+        chainName: 'Binance Smart Chain',
+        nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+        rpcUrls: ['https://bsc-dataseed.binance.org/'],
+        blockExplorerUrls: ['https://bscscan.com/']
+      };
+      try {
+        const res = await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [params] });
+        log('wallet_addEthereumChain ->', res);
+      } catch (e) { log('addChain err', e.message || e); }
+    };
+
+    document.getElementById('btnAddToken').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      const address = document.getElementById('tokenAddress').value;
+      const symbol = document.getElementById('tokenSymbol').value || 'TST';
+      const decimals = Number(document.getElementById('tokenDecimals').value || 18);
+      if (!address) return alert('Token address required');
+      try {
+        const res = await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: { address, symbol, decimals }
+          }
+        });
+        log('wallet_watchAsset ->', res);
+      } catch (e) { log('watchAsset err', e.message || e); }
+    };
+
+    document.getElementById('btnGetPerms').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      try {
+        const res = await window.ethereum.request({ method: 'wallet_getPermissions' });
+        log('wallet_getPermissions ->', res);
+      } catch (e) { log('getPermissions err', e.message || e); }
+    };
+
+    document.getElementById('btnRequestPerms').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      try {
+        const res = await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+        log('wallet_requestPermissions ->', res);
+      } catch (e) { log('requestPermissions err', e.message || e); }
+    };
+
+    document.getElementById('btnWatch').onclick = async () => {
+      if (!window.ethereum) return alert('No provider');
+      log('Registering listeners for accountsChanged and chainChanged');
+      window.ethereum.on && window.ethereum.on('accountsChanged', (accounts) => {
+        log('EVENT accountsChanged ->', accounts);
+      });
+      window.ethereum.on && window.ethereum.on('chainChanged', (chainId) => {
+        log('EVENT chainChanged ->', chainId);
+      });
+      alert('Listeners registered (check log area when switching account/chain).');
+    };
+
+    // Safe defaults & hints
+    log('Tip: use testnet or value 0 for eth_sendTransaction when experimenting.');
+    detectProvider();
+  </script>
+</body>
+</html>
