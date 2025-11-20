@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg">
-  <script>
-    eval(String.fromCharCode(97,108,101,114,116,40,49,41))
-  </script>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <a xlink:href="javascript:alert(1)">
+    <text x="20" y="20">Click me</text>
+  </a>
 </svg>
