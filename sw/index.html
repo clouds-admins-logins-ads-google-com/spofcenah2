@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coba Notif</title>
+</head>
+<body>
+    <h1>Belajar Notifikasi</h1>
+    <p id="status">Status SW: Menunggu...</p>
+    
+    <button onclick="mintaIzin()">1. Aktifkan Izin Notif</button>
+    <button id="btnNotif" onclick="kirimNotif()" disabled>2. Test Notif Sekarang</button>
+
+    <script>
+        // Registrasi Service Worker dengan benar
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => {
+                    console.log('SW Berhasil didaftarkan');
+                    document.getElementById('status').innerText = 'Status SW: Aktif & Terdaftar!';
+                    document.getElementById('btnNotif').disabled = false; // Aktifkan tombol
+                })
+                .catch(err => {
+                    console.error('SW Gagal:', err);
+                    document.getElementById('status').innerText = 'Status SW: Gagal Daftar!';
+                });
+            });
+        }
+
+        async function mintaIzin() {
+            const izin = await Notification.requestPermission();
+            alert('Status Izin: ' + izin);
+        }
+
+        async function kirimNotif() {
+            const reg = await navigator.serviceWorker.getRegistration();
+            if (reg) {
+                reg.showNotification('Halo Berhasil!', {
+                    body: 'Notifikasi ini muncul dari Service Worker.',
+                    icon: 'https://via.placeholder.com/128'
+                });
+            } else {
+                alert('Aduh, Service Worker masih belum terdeteksi!');
+            }
+        }
+    </script>
+</body>
+</html>
