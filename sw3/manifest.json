@@ -1,0 +1,16 @@
+{
+  "name": "Aplikasi PWA Coba CobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCoba\nCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCoba\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ns",
+  "short_name": "PWA-Test",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#317EFB",
+  "icons": [
+  {
+    "src": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
+    "sizes": "912x912",
+    "type": "image/png",
+    "purpose": "any maskable"
+  }
+]
+}

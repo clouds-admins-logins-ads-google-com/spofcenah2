@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Sederhana</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        .card { border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Halo PWA!</h1>
+        <p>Jika kamu melihat tombol "Install" di browser, berarti ini berhasil.</p>
+    </div>
+
+    <script>
+        // Mendaftarkan Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("Service Worker Terdaftar!"))
+            .catch(err => console.log("Gagal daftar SW:", err));
+        }
+    </script>
+</body>
+</html>
