@@ -1,1 +1,187 @@
-<iframe src="https://permission.site/"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Browser Permissions Playground</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  background:#1e1e1e;
+  color:#eee;
+  font-family:system-ui,Segoe UI,sans-serif;
+}
+h1{
+  text-align:center;
+  font-weight:500;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+  padding:20px;
+}
+button{
+  background:#3a3a3a;
+  border:1px solid #555;
+  color:#fff;
+  padding:14px;
+  font-size:14px;
+  cursor:pointer;
+}
+button:hover{
+  background:#555;
+}
+.log{
+  background:#111;
+  padding:10px;
+  font-size:12px;
+  height:150px;
+  overflow:auto;
+}
+</style>
+</head>
+<body>
+
+<h1>Browser Permission Playground</h1>
+
+<div class="grid">
+  <button onclick="askNotification()">Notifications</button>
+  <button onclick="askLocation()">Location</button>
+  <button onclick="askCamera()">Camera</button>
+  <button onclick="askMic()">Microphone</button>
+  <button onclick="askCamMic()">Camera + Microphone</button>
+  <button onclick="askScreen()">Screen Share</button>
+  <button onclick="askClipboardRead()">Read Clipboard</button>
+  <button onclick="askClipboardWrite()">Write Clipboard</button>
+  <button onclick="askBluetooth()">Bluetooth</button>
+  <button onclick="askUSB()">USB</button>
+  <button onclick="askSerial()">Serial</button>
+  <button onclick="askHID()">HID</button>
+  <button onclick="goFullscreen()">Fullscreen</button>
+  <button onclick="lockPointer()">Pointer Lock</button>
+  <button onclick="openPopup()">Popup</button>
+  <button onclick="delayedPopup()">Popup (Delayed)</button>
+</div>
+
+<div class="log" id="log"></div>
+
+<script>
+const log = msg => {
+  const el = document.getElementById('log');
+  el.innerHTML += msg + "<br>";
+  el.scrollTop = el.scrollHeight;
+};
+
+// ================= BASIC PERMISSIONS =================
+
+async function askNotification(){
+  const r = await Notification.requestPermission();
+  log("Notification: " + r);
+}
+
+function askLocation(){
+  navigator.geolocation.getCurrentPosition(
+    p => log(`Location: ${p.coords.latitude}, ${p.coords.longitude}`),
+    e => log("Location error: " + e.message)
+  );
+}
+
+async function askCamera(){
+  try{
+    await navigator.mediaDevices.getUserMedia({video:true});
+    log("Camera granted");
+  }catch(e){ log(e.message); }
+}
+
+async function askMic(){
+  try{
+    await navigator.mediaDevices.getUserMedia({audio:true});
+    log("Microphone granted");
+  }catch(e){ log(e.message); }
+}
+
+async function askCamMic(){
+  try{
+    await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    log("Camera + Mic granted");
+  }catch(e){ log(e.message); }
+}
+
+// ================= POWERFUL APIS =================
+
+async function askScreen(){
+  try{
+    await navigator.mediaDevices.getDisplayMedia({video:true});
+    log("Screen share started");
+  }catch(e){ log(e.message); }
+}
+
+async function askClipboardRead(){
+  try{
+    const t = await navigator.clipboard.readText();
+    log("Clipboard read: " + t);
+  }catch(e){ log(e.message); }
+}
+
+async function askClipboardWrite(){
+  try{
+    await navigator.clipboard.writeText("Injected by permission demo");
+    log("Clipboard written");
+  }catch(e){ log(e.message); }
+}
+
+async function askBluetooth(){
+  try{
+    const d = await navigator.bluetooth.requestDevice({acceptAllDevices:true});
+    log("Bluetooth: " + d.name);
+  }catch(e){ log(e.message); }
+}
+
+async function askUSB(){
+  try{
+    const d = await navigator.usb.requestDevice({filters:[]});
+    log("USB device: " + d.productName);
+  }catch(e){ log(e.message); }
+}
+
+async function askSerial(){
+  try{
+    const p = await navigator.serial.requestPort();
+    log("Serial port granted");
+  }catch(e){ log(e.message); }
+}
+
+async function askHID(){
+  try{
+    const d = await navigator.hid.requestDevice({filters:[]});
+    log("HID granted: " + d.length + " device(s)");
+  }catch(e){ log(e.message); }
+}
+
+// ================= UI CONTROL =================
+
+function goFullscreen(){
+  document.documentElement.requestFullscreen();
+  log("Fullscreen requested");
+}
+
+function lockPointer(){
+  document.body.requestPointerLock();
+  log("Pointer lock requested");
+}
+
+function openPopup(){
+  window.open("https://example.com","_blank","width=500,height=400");
+  log("Popup opened");
+}
+
+function delayedPopup(){
+  setTimeout(openPopup,5000);
+  log("Popup scheduled (5s)");
+}
+</script>
+
+</body>
+</html>
