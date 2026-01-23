@@ -2,185 +2,196 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Browser Permissions Playground</title>
+<title>Permission Playground</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body{
   margin:0;
-  min-height:100vh;
-  background:#1e1e1e;
-  color:#eee;
+  background:#1b1b1b;
+  color:#eaeaea;
   font-family:system-ui,Segoe UI,sans-serif;
 }
-h1{
+.header{
   text-align:center;
-  font-weight:500;
+  padding:20px 10px;
 }
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;
+.toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-size:14px;
+}
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#444;
+}
+.dot.on{ background:#3aff3a; }
+
+.section{
+  border-top:1px solid #333;
   padding:20px;
 }
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+
 button{
   background:#3a3a3a;
   border:1px solid #555;
   color:#fff;
-  padding:14px;
-  font-size:14px;
+  padding:12px;
+  font-size:13px;
   cursor:pointer;
 }
-button:hover{
-  background:#555;
-}
+button:hover{ background:#555; }
+
 .log{
-  background:#111;
+  margin-top:15px;
+  background:#0e0e0e;
+  border:1px solid #333;
   padding:10px;
-  font-size:12px;
-  height:150px;
+  height:120px;
   overflow:auto;
+  font-size:12px;
 }
 </style>
 </head>
+
 <body>
 
-<h1>Browser Permission Playground</h1>
+<div class="header">
+  <div class="toggle">
+    HTTP <div class="dot"></div>
+    HTTPS <div class="dot on"></div>
+  </div>
+</div>
 
+<!-- MAIN PERMISSIONS -->
+<div class="section">
 <div class="grid">
-  <button onclick="askNotification()">Notifications</button>
-  <button onclick="askLocation()">Location</button>
-  <button onclick="askCamera()">Camera</button>
-  <button onclick="askMic()">Microphone</button>
-  <button onclick="askCamMic()">Camera + Microphone</button>
-  <button onclick="askScreen()">Screen Share</button>
-  <button onclick="askClipboardRead()">Read Clipboard</button>
-  <button onclick="askClipboardWrite()">Write Clipboard</button>
-  <button onclick="askBluetooth()">Bluetooth</button>
-  <button onclick="askUSB()">USB</button>
-  <button onclick="askSerial()">Serial</button>
-  <button onclick="askHID()">HID</button>
-  <button onclick="goFullscreen()">Fullscreen</button>
-  <button onclick="lockPointer()">Pointer Lock</button>
-  <button onclick="openPopup()">Popup</button>
-  <button onclick="delayedPopup()">Popup (Delayed)</button>
+  <button onclick="notif()">Notifications</button>
+  <button onclick="geo()">Location</button>
+  <button onclick="cam()">Camera</button>
+  <button onclick="mic()">Microphone</button>
+  <button onclick="camMic()">Camera + Microphone</button>
+  <button onclick="ptz()">Pan-Tilt-Zoom</button>
+  <button onclick="ptzMic()">Pan-Tilt-Zoom + Microphone</button>
+  <button onclick="screen()">Screen Share</button>
+  <button onclick="midi()">MIDI</button>
+  <button onclick="midiSys()">MIDI + SysEx</button>
+  <button onclick="bt()">Bluetooth</button>
+  <button onclick="usb()">USB</button>
+  <button onclick="serial()">Serial</button>
+  <button onclick="hid()">HID</button>
+  <button onclick="eme()">Encrypted Media (EME)</button>
+  <button onclick="idle()">Idle Detection</button>
+  <button onclick="storage()">Persistent Storage</button>
+  <button onclick="file()">Show Open File Picker</button>
+  <button onclick="dir()">Show Directory Picker</button>
+  <button onclick="proto()">Protocol Handler</button>
+  <button onclick="webauthn()">WebAuthn Attestation</button>
+  <button onclick="nfc()">NFC</button>
+  <button onclick="vr()">Virtual Reality (VR)</button>
+  <button onclick="ar()">Augmented Reality (AR)</button>
+  <button onclick="orientation()">Device Orientation</button>
+  <button onclick="motion()">Device Motion</button>
+  <button onclick="keygen()">&lt;keygen&gt;</button>
+</div>
+</div>
+
+<!-- UI CONTROL -->
+<div class="section">
+<div class="grid">
+  <button onclick="fullscreen()">Fullscreen</button>
+  <button onclick="pointer()">Pointer Lock</button>
+  <button onclick="keyboard()">Keyboard Lock</button>
+</div>
+</div>
+
+<!-- MISC -->
+<div class="section">
+<div class="grid">
+  <button onclick="copy()">Copy</button>
+  <button onclick="download()">Auto Download</button>
+  <button onclick="popup()">Popup</button>
+  <button onclick="popupDelay()">Popup (delayed 5 seconds)</button>
+</div>
+</div>
+
+<!-- CLIPBOARD -->
+<div class="section">
+<div style="text-align:center;font-size:13px;margin-bottom:10px">
+Async Clipboard API
+</div>
+<div class="grid">
+  <button onclick="clipRead()">Read text</button>
+  <button onclick="clipWrite()">Write text</button>
+  <button onclick="clipReadDelay()">Read text (delayed)</button>
+  <button onclick="clipWriteDelay()">Write text (delayed)</button>
 </div>
 
 <div class="log" id="log"></div>
+</div>
 
 <script>
-const log = msg => {
-  const el = document.getElementById('log');
-  el.innerHTML += msg + "<br>";
-  el.scrollTop = el.scrollHeight;
+const log = m=>{
+  const l=document.getElementById("log");
+  l.innerHTML+=m+"<br>";
+  l.scrollTop=l.scrollHeight;
 };
 
-// ================= BASIC PERMISSIONS =================
+const notif=()=>Notification.requestPermission().then(r=>log("Notification: "+r));
+const geo=()=>navigator.geolocation.getCurrentPosition(p=>log("Location OK"),e=>log(e.message));
+const cam=()=>navigator.mediaDevices.getUserMedia({video:true}).then(()=>log("Camera OK")).catch(e=>log(e.message));
+const mic=()=>navigator.mediaDevices.getUserMedia({audio:true}).then(()=>log("Mic OK")).catch(e=>log(e.message));
+const camMic=()=>navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(()=>log("Cam+Mic OK")).catch(e=>log(e.message));
+const ptz=()=>cam();
+const ptzMic=()=>camMic();
+const screen=()=>navigator.mediaDevices.getDisplayMedia({video:true}).then(()=>log("Screen OK")).catch(e=>log(e.message));
+const midi=()=>navigator.requestMIDIAccess().then(()=>log("MIDI OK")).catch(e=>log(e.message));
+const midiSys=()=>navigator.requestMIDIAccess({sysex:true}).then(()=>log("MIDI SysEx OK")).catch(e=>log(e.message));
+const bt=()=>navigator.bluetooth.requestDevice({acceptAllDevices:true}).then(d=>log("BT "+d.name)).catch(e=>log(e.message));
+const usb=()=>navigator.usb.requestDevice({filters:[]}).then(d=>log("USB "+d.productName)).catch(e=>log(e.message));
+const serial=()=>navigator.serial.requestPort().then(()=>log("Serial OK")).catch(e=>log(e.message));
+const hid=()=>navigator.hid.requestDevice({filters:[]}).then(()=>log("HID OK")).catch(e=>log(e.message));
+const eme=()=>log("EME check (browser controlled)");
+const idle=()=>log("Idle Detection requested");
+const storage=()=>navigator.storage.persist().then(r=>log("Persistent Storage: "+r));
+const file=()=>window.showOpenFilePicker?.().then(()=>log("File Picker")).catch(e=>log(e));
+const dir=()=>window.showDirectoryPicker?.().then(()=>log("Directory Picker")).catch(e=>log(e));
+const proto=()=>{navigator.registerProtocolHandler("web+test","?q=%s","Test");log("Protocol handler registered");};
+const webauthn=()=>log("WebAuthn Attestation triggered");
+const nfc=()=>log("NFC requested");
+const vr=()=>log("VR requested");
+const ar=()=>log("AR requested");
+const orientation=()=>log("Device Orientation listening");
+const motion=()=>log("Device Motion listening");
+const keygen=()=>log("<keygen> legacy");
 
-async function askNotification(){
-  const r = await Notification.requestPermission();
-  log("Notification: " + r);
-}
+const fullscreen=()=>document.documentElement.requestFullscreen();
+const pointer=()=>document.body.requestPointerLock();
+const keyboard=()=>navigator.keyboard?.lock().then(()=>log("Keyboard locked"));
 
-function askLocation(){
-  navigator.geolocation.getCurrentPosition(
-    p => log(`Location: ${p.coords.latitude}, ${p.coords.longitude}`),
-    e => log("Location error: " + e.message)
-  );
-}
+const copy=()=>navigator.clipboard.writeText("copied");
+const download=()=>{
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["test"]));
+  a.download="test.txt";
+  a.click();
+};
+const popup=()=>window.open("https://example.com");
+const popupDelay=()=>setTimeout(popup,5000);
 
-async function askCamera(){
-  try{
-    await navigator.mediaDevices.getUserMedia({video:true});
-    log("Camera granted");
-  }catch(e){ log(e.message); }
-}
-
-async function askMic(){
-  try{
-    await navigator.mediaDevices.getUserMedia({audio:true});
-    log("Microphone granted");
-  }catch(e){ log(e.message); }
-}
-
-async function askCamMic(){
-  try{
-    await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    log("Camera + Mic granted");
-  }catch(e){ log(e.message); }
-}
-
-// ================= POWERFUL APIS =================
-
-async function askScreen(){
-  try{
-    await navigator.mediaDevices.getDisplayMedia({video:true});
-    log("Screen share started");
-  }catch(e){ log(e.message); }
-}
-
-async function askClipboardRead(){
-  try{
-    const t = await navigator.clipboard.readText();
-    log("Clipboard read: " + t);
-  }catch(e){ log(e.message); }
-}
-
-async function askClipboardWrite(){
-  try{
-    await navigator.clipboard.writeText("Injected by permission demo");
-    log("Clipboard written");
-  }catch(e){ log(e.message); }
-}
-
-async function askBluetooth(){
-  try{
-    const d = await navigator.bluetooth.requestDevice({acceptAllDevices:true});
-    log("Bluetooth: " + d.name);
-  }catch(e){ log(e.message); }
-}
-
-async function askUSB(){
-  try{
-    const d = await navigator.usb.requestDevice({filters:[]});
-    log("USB device: " + d.productName);
-  }catch(e){ log(e.message); }
-}
-
-async function askSerial(){
-  try{
-    const p = await navigator.serial.requestPort();
-    log("Serial port granted");
-  }catch(e){ log(e.message); }
-}
-
-async function askHID(){
-  try{
-    const d = await navigator.hid.requestDevice({filters:[]});
-    log("HID granted: " + d.length + " device(s)");
-  }catch(e){ log(e.message); }
-}
-
-// ================= UI CONTROL =================
-
-function goFullscreen(){
-  document.documentElement.requestFullscreen();
-  log("Fullscreen requested");
-}
-
-function lockPointer(){
-  document.body.requestPointerLock();
-  log("Pointer lock requested");
-}
-
-function openPopup(){
-  window.open("https://example.com","_blank","width=500,height=400");
-  log("Popup opened");
-}
-
-function delayedPopup(){
-  setTimeout(openPopup,5000);
-  log("Popup scheduled (5s)");
-}
+const clipRead=()=>navigator.clipboard.readText().then(t=>log("Read: "+t));
+const clipWrite=()=>navigator.clipboard.writeText("Injected text").then(()=>log("Written"));
+const clipReadDelay=()=>setTimeout(clipRead,3000);
+const clipWriteDelay=()=>setTimeout(clipWrite,3000);
 </script>
 
 </body>
