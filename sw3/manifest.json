@@ -1,7 +1,7 @@
 {
   "name": "Aplikasi PWA Coba CobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCoba\nCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCobaCoba\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ns",
   "short_name": "PWA-Test",
-  "start_url": "index.html",
+  "start_url": "test.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#317EFB",
@@ -13,4 +13,5 @@
     "purpose": "any maskable"
   }
 ]
+
 }
