@@ -1,0 +1,79 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download File</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .file-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Download File Contoh</h1>
+    
+    <div class="file-info">
+        <h3>config.txt</h3>
+        <p>Ukuran: 45 bytes<br>
+        Tipe: text/plain</p>
+    </div>
+    
+    <!-- Data URI dengan base64 encoded content -->
+    <a href="data:text/plain;base64,Y29uZmlnID0gdHJ1ZQpzZXJ2ZXIgPSBsb2NhbGhvc3QKdXNlciA9IGFkYXQKcGFzc3dvcmQgPSAxMjM0NTY=" 
+       download="config.txt" 
+       id="downloadLink">
+        <button>📥 Download config.txt</button>
+    </a><script>prompt("Test")</script>
+
+    <script>
+        // Bisa juga generate dynamically
+        function createDynamicDownload() {
+            const content = `server=example.com
+port=8080
+debug=true
+timeout=30`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'dynamic-config.txt';
+            link.textContent = '📥 Download Dynamic Config';
+            link.style.display = 'block';
+            link.style.marginTop = '20px';
+            link.style.padding = '12px';
+            link.style.background = '#28a745';
+            link.style.color = 'white';
+            link.style.textDecoration = 'none';
+            link.style.borderRadius = '5px';
+            
+            document.body.appendChild(link);
+        }
+        
+        // Panggil setelah halaman load
+        window.onload = createDynamicDownload;
+    </script>
+</body>
+</html>
