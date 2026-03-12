@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hallow File Editor</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        p { color: #666; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>File System Access API</h2>
+        <p>Pilih file teks untuk mengubah isinya menjadi <strong>"hallow"</strong></p>
+        <button id="btnEdit">Pilih & Edit File</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const btnEdit = document.getElementById('btnEdit');
+        const statusText = document.getElementById('status');
+
+        btnEdit.addEventListener('click', async () => {
+            try {
+                // 1. Buka Picker File
+                const [fileHandle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'Text Files',
+                        accept: { 'text/plain': ['.txt'] },
+                    }],
+                    multiple: false
+                });
+
+                statusText.innerText = "Memproses...";
+
+                // 2. Buat Writable Stream
+                const writable = await fileHandle.createWritable();
+
+                // 3. Tulis "hallow"
+                await writable.write('hallow');
+
+                // 4. Simpan dan Tutup
+                await writable.close();
+
+                statusText.style.color = "green";
+                statusText.innerText = "Berhasil! File sekarang berisi 'hallow'.";
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    statusText.innerText = "Pemilihan file dibatalkan.";
+                } else {
+                    console.error(err);
+                    statusText.style.color = "red";
+                    statusText.innerText = "Error: " + err.message;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
