@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digital Credential Demo</title>
+</head>
+<body>
+  <button onclick="issue()">Issue Credential</button>
+  <button onclick="present()">Present Credential</button>
+
+  <script>
+    async function issue() {
+      if (!window.DigitalCredential) {
+        alert("Not supported");
+        return;
+      }
+
+      const credentialOffer = {
+        credential_issuer: "https://digital-credentials.dev",
+        credential_configuration_ids: ["org.iso.18013.5.1.mDL"],
+      };
+
+      const result = await navigator.credentials.create({
+        digital: {
+          protocol: "openid4vci",
+          data: credentialOffer
+        }
+      });
+
+      console.log("Issued:", result);
+    }
+
+async function present() {
+  const result = await navigator.credentials.get({
+    digital: {
+      requests: [
+        {
+          protocol: "openid4vp",
+          data: {
+            presentation_definition: {
+              id: "example",
+              input_descriptors: []
+            }
+          }
+        }
+      ]
+    }
+  });
+
+  console.log(result);
+}
+  </script>
+</body>
+</html>
